@@ -14,6 +14,7 @@ def stack_exchanged_paired_dataset(
     *,
     source: str = "lvwerra/stack-exchange-paired",
     max_seq_len: int = 1024,
+    data_dir: str = "data/rl",
 ) -> PreferenceDataset:
     """
     Family of preference datasets similar to `StackExchangePaired data
@@ -39,5 +40,5 @@ def stack_exchanged_paired_dataset(
         },
         max_seq_len=max_seq_len,
         split="train",
-        data_dir="data/rl",
+        data_dir=data_dir,
     )
