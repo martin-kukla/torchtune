@@ -11,10 +11,11 @@ from torchtune.datasets._concat import ConcatDataset
 from torchtune.datasets._grammar import grammar_dataset
 from torchtune.datasets._instruct import instruct_dataset, InstructDataset
 from torchtune.datasets._packed import PackedDataset
-from torchtune.datasets._preference import PreferenceDataset
+from torchtune.datasets._preference import PreferenceDataset, PreferenceDatasetForSFT
 from torchtune.datasets._samsum import samsum_dataset
 from torchtune.datasets._slimorca import slimorca_dataset
 from torchtune.datasets._stack_exchanged_paired import stack_exchanged_paired_dataset
+from torchtune.datasets._stack_exchanged_sft import stack_exchanged_sft_dataset
 from torchtune.datasets._text_completion import (
     text_completion_dataset,
     TextCompletionDataset,
@@ -27,6 +28,7 @@ __all__ = [
     "grammar_dataset",
     "samsum_dataset",
     "stack_exchanged_paired_dataset",
+    "stack_exchanged_sft_dataset",
     "InstructDataset",
     "slimorca_dataset",
     "ChatDataset",
@@ -39,4 +41,5 @@ __all__ = [
     "ConcatDataset",
     "wikitext_dataset",
     "PreferenceDataset",
+    "PreferenceDatasetForSFT",
 ]

@@ -117,3 +117,11 @@ class PreferenceDataset(Dataset):
         )
 
         return batch
+
+# Hacky wrapper: Takes only chosen's tokens/labels, and mimics InstructDataset, so we can run SFT recipe on it
+# TODO: Rewrite it
+class PreferenceDatasetForSFT(PreferenceDataset):
+    def _prepare_sample(self, sample: Mapping[str, Any]) -> Dict[str, List[int]]:
+        preference_ds_batch = super()._prepare_sample(sample)
+        batch = {"tokens": preference_ds_batch["chosen_input_ids"], "labels": preference_ds_batch["chosen_labels"]}
+        return batch
