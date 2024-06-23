@@ -34,8 +34,6 @@ class ORPOLoss(nn.Module):
         self,
         policy_chosen_logps: torch.Tensor,
         policy_rejected_logps: torch.Tensor,
-        reference_chosen_logps: torch.Tensor, # TODO: remove
-        reference_rejected_logps: torch.Tensor, # TODO: remove
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Compute the ORPO loss for a batch of policy log probabilities. 
