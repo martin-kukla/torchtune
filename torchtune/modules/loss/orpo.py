@@ -27,7 +27,7 @@ class ORPOLoss(nn.Module):
         label_smoothing: float = 0.0, # TODO: support?
         loss_type: str = "sigmoid", # TODO: remove?
     ):
-        super(DPOLoss, self).__init__()
+        super(ORPOLoss, self).__init__()
         self.beta = beta
 
     def forward(
@@ -63,10 +63,10 @@ class ORPOLoss(nn.Module):
         losses = - policy_chosen_logps  + self.beta * or_loss
 
         chosen_rewards = (
-            policy_chosen_logps.deatach()
+            policy_chosen_logps.detach()
         )
         rejected_rewards = (
-            policy_rejected_logps.deatach()
+            policy_rejected_logps.detach()
         )
 
         return losses, chosen_rewards, rejected_rewards
