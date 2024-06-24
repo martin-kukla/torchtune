@@ -32,10 +32,10 @@ from tqdm import tqdm
 log = utils.get_logger("DEBUG")
 
 
-class LoRAORPORecipeSingleDevice(FTRecipeInterface):
+class LoRAORPORecipeDDP(FTRecipeInterface):
     """
-    LoRA DPO recipe for dense transformer-based LLMs such as Llama2 for
-    single device training. This is based on HF's DPOTrainer in the
+    LoRA ORPO recipe for dense transformer-based LLMs such as Llama2 for
+    distributed training using DDP. This is based on HF's DPOTrainer in the
     TRL library: https://github.com/huggingface/trl/blob/main/trl/trainer/dpo_trainer.py#L65
 
     This recipe supports:
@@ -580,8 +580,8 @@ def recipe_main(cfg: DictConfig) -> None:
         - Parameters specified in config (see available configs through ``tune ls``)
         - Overwritten by arguments from the command-line
     """
-    config.log_config(recipe_name="LoRAORPORecipeSingleDevice", cfg=cfg)
-    recipe = LoRAORPORecipeSingleDevice(cfg=cfg)
+    config.log_config(recipe_name="LoRAORPORRecipeDDP", cfg=cfg)
+    recipe = LoRAORPORecipeDDP(cfg=cfg)
     recipe.setup(cfg=cfg)
     recipe.train()
     recipe.cleanup()
