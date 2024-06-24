@@ -212,6 +212,17 @@ _ALL_RECIPES = [
         ],
         supports_distributed=False,
     ),
+    Recipe(
+        name="lora_orpo_single_device",
+        file_path="lora_orpo_single_device.py",
+        configs=[
+            Config(
+                name="llama2/7B_lora_dpo_single_device",
+                file_path="llama2/7B_lora_dpo_single_device.yaml", # TODO: Add seperate config for ORPO
+            ),
+        ],
+        supports_distributed=False,
+    ),
 ]
 
 

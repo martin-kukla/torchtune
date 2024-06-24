@@ -32,17 +32,17 @@ class ORPOLoss(nn.Module):
 
     def forward(
         self,
-        policy_chosen_logps: torch.Tensor,
-        policy_rejected_logps: torch.Tensor,
+        avg_chosen_logps: torch.Tensor,
+        avg_rejected_logps: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Compute the ORPO loss for a batch of policy log probabilities. 
         TODO: Remove a batch of reference model log probabilities as parameter.
 
         Args:
-            policy_chosen_logps (torch.Tensor): Log probabilities of the policy model
+            avg_chosen_logps (torch.Tensor): Average log probabilities
                 for the chosen responses. Shape: (batch_size)
-            policy_rejected_logps (torch.Tensor): Log probabilities of the policy model
+            avg_rejected_logps (torch.Tensor): Average log probabilities
                 for the rejected responses. Shape: (batch_size)
 
         Returns:
@@ -50,21 +50,24 @@ class ORPOLoss(nn.Module):
                 - losses: The ORPO loss for each example in the batch.
                 - chosen_rewards: Rewards for the chosen responses.
                 - rejected_rewards: Rewards for the rejected responses.
+                - or_loss: Odd ratio loss.
+                - log_odds_chosen: Log odds chosen.
+                - log_odds_rejected: Log odds rejected.
 
         Raises:
             ValueError: If an unknown loss type is specified.
         """
         # TODO: check maths - I wrote it in few mins
-        log_odds_chosen = policy_chosen_logps - torch.log1p(-torch.exp(policy_chosen_logps))
-        log_odds_rejected = policy_rejected_logps - torch.log1p(-torch.exp(policy_rejected_logps))
+        log_odds_chosen = avg_chosen_logps - torch.log1p(-torch.exp(avg_chosen_logps))
+        log_odds_rejected = avg_rejected_logps - torch.log1p(-torch.exp(avg_rejected_logps))
         or_loss = - F.logsigmoid(log_odds_chosen - log_odds_rejected)
-        losses = - policy_chosen_logps  + self.beta * or_loss
+        losses = - avg_chosen_logps  + self.beta * or_loss
 
         chosen_rewards = (
-            policy_chosen_logps.detach()
+            avg_chosen_logps.detach()
         )
         rejected_rewards = (
-            policy_rejected_logps.detach()
+            avg_rejected_logps.detach()
         )
 
-        return losses, chosen_rewards, rejected_rewards
+        return losses, chosen_rewards, rejected_rewards, or_loss, log_odds_chosen, log_odds_rejected
