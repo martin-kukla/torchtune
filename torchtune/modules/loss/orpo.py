@@ -50,6 +50,7 @@ class ORPOLoss(nn.Module):
                 - losses: The ORPO loss for each example in the batch.
                 - chosen_rewards: Rewards for the chosen responses.
                 - rejected_rewards: Rewards for the rejected responses.
+                - nll_loss_chosen: NLL loss for chosen response.
                 - or_loss: Odd ratio loss.
                 - log_odds_chosen: Log odds chosen.
                 - log_odds_rejected: Log odds rejected.
@@ -61,7 +62,8 @@ class ORPOLoss(nn.Module):
         log_odds_chosen = avg_chosen_logps - torch.log1p(-torch.exp(avg_chosen_logps))
         log_odds_rejected = avg_rejected_logps - torch.log1p(-torch.exp(avg_rejected_logps))
         or_loss = - F.logsigmoid(log_odds_chosen - log_odds_rejected)
-        losses = - avg_chosen_logps  + self.beta * or_loss
+        nll_loss_chosen = - avg_chosen_logps # Other implementations make extra call to CrossEntropy/NLLLoss pytorch layer, which I don't think we need?
+        losses =  nll_loss_chosen + self.beta * or_loss
 
         chosen_rewards = (
             avg_chosen_logps.detach()
@@ -70,4 +72,4 @@ class ORPOLoss(nn.Module):
             avg_rejected_logps.detach()
         )
 
-        return losses, chosen_rewards, rejected_rewards, or_loss, log_odds_chosen, log_odds_rejected
+        return losses, chosen_rewards, rejected_rewards, nll_loss_chosen, or_loss, log_odds_chosen, log_odds_rejected

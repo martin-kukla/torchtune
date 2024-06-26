@@ -465,7 +465,7 @@ class LoRAORPORecipeSingleDevice(FTRecipeInterface):
             logits.log_softmax(-1), dim=2, index=labels.unsqueeze(2)
         ).squeeze(2)
 
-        return torch.nanmean(per_token_log_probs * loss_mask, dim=-1)
+        return (per_token_log_probs * loss_mask).sum(-1) / loss_mask.sum(-1)
 
     def train(self) -> None:
         """
@@ -500,7 +500,7 @@ class LoRAORPORecipeSingleDevice(FTRecipeInterface):
                     rejected_logits,
                 ) = self.concatenated_forward(self._model, batch)
 
-                loss, chosen_rewards, rejected_rewards, or_loss, log_odds_chosen, log_odds_rejected = self._loss_fn(
+                loss, chosen_rewards, rejected_rewards, nll_loss_chosen, or_loss, log_odds_chosen, log_odds_rejected = self._loss_fn(
                     avg_chosen_log_probs,
                     avg_rejected_log_probs,
                 )
@@ -548,6 +548,7 @@ class LoRAORPORecipeSingleDevice(FTRecipeInterface):
                             .mean()
                             .cpu(),
                             "logits/chosen": chosen_logits.detach().mean().cpu(),
+                            "orpo/nll_loss_chosen": nll_loss_chosen.detach().mean().cpu(),
                             "orpo/or_loss": or_loss.detach().mean().cpu(),
                             "orpo/log_odds_chosen": log_odds_chosen.detach().mean().cpu(),
                             "orpo/log_odds_rejected": log_odds_rejected.detach().mean().cpu(),
