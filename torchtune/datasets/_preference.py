@@ -50,10 +50,20 @@ class PreferenceDataset(Dataset):
         transform: Optional[Callable] = None,
         column_map: Optional[Dict[str, str]] = None,
         max_seq_len: Optional[int] = None,
+        local_dataset: bool = False,
         **load_dataset_kwargs: Dict[str, Any],
     ) -> None:
         self._tokenizer = tokenizer
-        self._data = load_dataset(source, **load_dataset_kwargs)
+        if local_dataset:
+            from datasets import load_from_disk
+            dataset = load_from_disk(source)
+            if load_dataset_kwargs["split"] in dataset:
+                self._data = dataset[load_dataset_kwargs["split"]]
+            else:
+                print(f'Warning: Dataset does not have train/test splits')
+                self._data = dataset
+        else:
+            self._data = load_dataset(source, **load_dataset_kwargs)
         self.template = template
         self._transform = transform
         self._column_map = column_map
