@@ -15,6 +15,7 @@ def stack_exchanged_sft_dataset(
     *,
     source: str = "lvwerra/stack-exchange-paired",
     max_seq_len: int = 1024,
+    local_dataset: bool = False,
 ) -> InstructDataset:
     """
     Family of preference datasets similar to `StackExchangePaired data
@@ -39,6 +40,7 @@ def stack_exchanged_sft_dataset(
             "rejected": "response_k",
         },
         max_seq_len=max_seq_len,
+        local_dataset = local_dataset,
         split="train",
         data_dir="data/finetune",
     )
